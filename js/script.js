@@ -1,4 +1,4 @@
-const apiUrl = 'https://taskhive-310kf4xo9-onictechs-projects.vercel.app';  // Update with your Vercel backend URL
+const apiUrl = 'https://taskhive-4lwlrf7az-onictechs-projects.vercel.app';  // Update with your Vercel backend URL
 
 async function register(event) {
     event.preventDefault();
