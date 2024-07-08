@@ -1,68 +1,34 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;  // Use a fixed port
 
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/taskhive', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-// User Schema
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
-});
-
-const User = mongoose.model('User', userSchema);
-
-// Task Schema
-const taskSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    task: { type: String, required: true },
-    deadline: { type: Date },
-    priority: { type: String, required: true }
-});
-
-const Task = mongoose.model('Task', taskSchema);
+// In-memory storage for demonstration purposes
+const users = [];
+const tasks = [];
 
 // User Registration
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username, password: hashedPassword });
-        await user.save();
-        res.status(201).send('User registered');
-    } catch (error) {
-        res.status(400).send('Error registering user');
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    users.push({ username, password: hashedPassword });
+    res.status(201).send('User registered');
 });
 
 // User Login
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(400).send('Invalid credentials');
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).send('Invalid credentials');
-        }
-        const token = jwt.sign({ username: user.username }, 'secretkey', { expiresIn: '1h' });
-        res.status(200).json({ token });
-    } catch (error) {
-        res.status(400).send('Error logging in');
+    const user = users.find(u => u.username === username);
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(400).send('Invalid credentials');
     }
+    const token = jwt.sign({ username: user.username }, 'secretkey', { expiresIn: '1h' });
+    res.status(200).json({ token });
 });
 
 // Middleware for authenticating tokens
@@ -78,47 +44,37 @@ const authenticate = (req, res, next) => {
 };
 
 // Create Task
-app.post('/tasks', authenticate, async (req, res) => {
+app.post('/tasks', authenticate, (req, res) => {
     const { task, deadline, priority } = req.body;
-    const newTask = new Task({ username: req.user.username, task, deadline, priority });
-    try {
-        await newTask.save();
-        res.status(201).send('Task created');
-    } catch (error) {
-        res.status(400).send('Error creating task');
-    }
+    tasks.push({ username: req.user.username, task, deadline, priority });
+    res.status(201).send('Task created');
 });
 
 // Get Tasks
-app.get('/tasks', authenticate, async (req, res) => {
-    try {
-        const tasks = await Task.find({ username: req.user.username });
-        res.status(200).json(tasks);
-    } catch (error) {
-        res.status(400).send('Error fetching tasks');
-    }
+app.get('/tasks', authenticate, (req, res) => {
+    const userTasks = tasks.filter(t => t.username === req.user.username);
+    res.status(200).json(userTasks);
 });
 
 // Delete Task
-app.delete('/tasks/:id', authenticate, async (req, res) => {
-    try {
-        await Task.deleteOne({ _id: req.params.id, username: req.user.username });
+app.delete('/tasks/:id', authenticate, (req, res) => {
+    const index = tasks.findIndex(t => t.id === req.params.id && t.username === req.user.username);
+    if (index !== -1) {
+        tasks.splice(index, 1);
         res.status(200).send('Task deleted');
-    } catch (error) {
-        res.status(400).send('Error deleting task');
+    } else {
+        res.status(400).send('Task not found');
     }
 });
 
 // Update Task
-app.put('/tasks/:id', authenticate, async (req, res) => {
-    try {
-        await Task.updateOne(
-            { _id: req.params.id, username: req.user.username },
-            { $set: req.body }
-        );
+app.put('/tasks/:id', authenticate, (req, res) => {
+    const task = tasks.find(t => t.id === req.params.id && t.username === req.user.username);
+    if (task) {
+        Object.assign(task, req.body);
         res.status(200).send('Task updated');
-    } catch (error) {
-        res.status(400).send('Error updating task');
+    } else {
+        res.status(400).send('Task not found');
     }
 });
 
