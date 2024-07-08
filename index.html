@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskHive</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="tests/jasmine/lib/jasmine.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>TaskHive</h1>
+    </div>
+    <div class="container">
+        <div id="registration-section">
+            <h2>Register</h2>
+            <form class="registration-form" onsubmit="register(event)">
+                <label for="reg-username">Username:</label><br>
+                <input type="text" id="reg-username" name="reg-username" required><br>
+                <label for="reg-password">Password:</label><br>
+                <input type="password" id="reg-password" name="reg-password" required><br><br>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+        <div id="login-section" style="display:none;">
+            <h2>Login</h2>
+            <form class="login-form" onsubmit="login(event)">
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username" required><br>
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password" required><br><br>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
+        </div>
+        <div id="task-section" style="display:none;">
+            <h2>Create Task</h2>
+            <form class="task-form" onsubmit="createTask(event)">
+                <label for="task">Task:</label><br>
+                <input type="text" id="task" name="task" required><br>
+                <label for="deadline">Deadline:</label><br>
+                <input type="date" id="deadline" name="deadline"><br>
+                <label for="priority">Priority:</label><br>
+                <select id="priority" name="priority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select><br><br>
+                <button type="submit">Add Task</button>
+            </form>
+            <h2>Tasks</h2>
+            <ul id="task-list" class="task-list"></ul>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="tests/jasmine/lib/jasmine.js"></script>
+    <script src="tests/jasmine/lib/jasmine-html.js"></script>
+    <script src="tests/jasmine/lib/boot0.js"></script>
+    <script src="tests/jasmine/lib/boot1.js"></script>
+    <script src="tests/spec/scriptSpec.js"></script>
+</body>
+</html>
