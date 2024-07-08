@@ -87,6 +87,19 @@ async function showTasks() {
     if (response.ok) {
         const tasks = await response.json();
         // Code to display tasks on the frontend
+        const taskList = document.getElementById('task-list');
+        taskList.innerHTML = '';  // Clear existing tasks
+        tasks.forEach(task => {
+            const li = document.createElement('li');
+            li.textContent = task.task;
+            taskList.appendChild(li);
+        });
+
+        document.getElementById('registration-section').style.display = 'none';
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('task-section').style.display = 'block';
+        document.getElementById('profile-section').style.display = 'none';
+        document.getElementById('change-password-section').style.display = 'none';
     } else {
         alert('Failed to fetch tasks');
     }
