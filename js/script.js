@@ -92,6 +92,5 @@ async function showTasks() {
     }
 }
 
-// Add event listeners to the forms for updating profile and changing password
 document.getElementById('profile-form').addEventListener('submit', updateProfile);
 document.getElementById('change-password-form').addEventListener('submit', changePassword);
