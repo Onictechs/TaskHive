@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
-const port = 3000;  // Use a fixed port
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -75,6 +75,32 @@ app.put('/tasks/:id', authenticate, (req, res) => {
         res.status(200).send('Task updated');
     } else {
         res.status(400).send('Task not found');
+    }
+});
+
+// Update Profile
+app.put('/profile', authenticate, (req, res) => {
+    const user = users.find(u => u.username === req.user.username);
+    if (user) {
+        user.username = req.body.username || user.username;
+        res.status(200).send('Profile updated');
+    } else {
+        res.status(400).send('User not found');
+    }
+});
+
+// Change Password
+app.put('/change-password', authenticate, async (req, res) => {
+    const user = users.find(u => u.username === req.user.username);
+    if (user) {
+        const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).send('Current password is incorrect');
+        }
+        user.password = await bcrypt.hash(req.body.newPassword, 10);
+        res.status(200).send('Password changed');
+    } else {
+        res.status(400).send('User not found');
     }
 });
 

@@ -54,6 +54,24 @@
             <ul id="task-list" class="task-list"></ul>
             <button onclick="logout()">Logout</button>
         </div>
+        <div id="profile-section" style="display:none;">
+            <h2>Update Profile</h2>
+            <form id="profile-form" onsubmit="updateProfile(event)">
+                <label for="new-username" class="form-label">New Username:</label><br>
+                <input type="text" id="new-username" name="new-username"><br><br>
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+        <div id="change-password-section" style="display:none;">
+            <h2>Change Password</h2>
+            <form id="change-password-form" onsubmit="changePassword(event)">
+                <label for="current-password" class="form-label">Current Password:</label><br>
+                <input type="password" id="current-password" name="current-password" required><br>
+                <label for="new-password" class="form-label">New Password:</label><br>
+                <input type="password" id="new-password" name="new-password" required><br><br>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
     </div>
     <script src="js/script.js"></script>
     <script src="tests/jasmine/lib/jasmine.js"></script>
