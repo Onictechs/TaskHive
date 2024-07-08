@@ -92,5 +92,21 @@ async function showTasks() {
     }
 }
 
+function showLogin() {
+    document.getElementById('registration-section').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+    document.getElementById('task-section').style.display = 'none';
+    document.getElementById('profile-section').style.display = 'none';
+    document.getElementById('change-password-section').style.display = 'none';
+}
+
+function showRegister() {
+    document.getElementById('registration-section').style.display = 'block';
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('task-section').style.display = 'none';
+    document.getElementById('profile-section').style.display = 'none';
+    document.getElementById('change-password-section').style.display = 'none';
+}
+
 document.getElementById('profile-form').addEventListener('submit', updateProfile);
 document.getElementById('change-password-form').addEventListener('submit', changePassword);
